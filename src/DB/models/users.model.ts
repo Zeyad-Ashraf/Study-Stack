@@ -9,8 +9,19 @@ export interface UserAttributes {
   lastName: string;
   email: string;
   password: string;
-  confirmed: boolean;
+  confirmed?: boolean;
   role: EnumRole;
+  otp?: {
+    otp: string;
+    createdAt: Date | null;
+    expireAt: Date | null;
+  };
+}
+
+interface OtpInterface {
+  otp: string;
+  createdAt: Date | null;
+  expireAt: Date | null;
 }
 
 @Table
@@ -25,7 +36,7 @@ export class User extends Model<
       notEmpty: true,
     },
   })
-  firstName: string;
+  declare firstName: string;
 
   @Column({
     type: DataType.STRING,
@@ -34,7 +45,7 @@ export class User extends Model<
       notEmpty: true,
     },
   })
-  lastName: string;
+  declare lastName: string;
 
   @Column({
     type: DataType.STRING,
@@ -45,16 +56,16 @@ export class User extends Model<
       notEmpty: true,
     },
   })
-  email: string;
+  declare email: string;
 
   @Column({
     type: DataType.STRING,
     allowNull: false,
   })
-  password: string;
+  declare password: string;
 
   @Column({ type: 'boolean', allowNull: false, defaultValue: false })
-  confirmed: boolean;
+  declare confirmed: boolean;
 
   @Column({
     type: DataType.ENUM,
@@ -62,8 +73,18 @@ export class User extends Model<
     values: Object.values(EnumRole),
     defaultValue: EnumRole.user,
   })
-  role: EnumRole;
+  declare role: EnumRole;
 
-  @HasOne(() => StudentInformation)
-  studentInformation: StudentInformation;
+  @Column({
+    type: DataType.JSONB,
+    allowNull: false,
+  })
+  declare otp: OtpInterface;
+
+  @HasOne(() => StudentInformation, {
+    foreignKey: 'userId',
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
+  })
+  declare studentInformation: StudentInformation;
 }

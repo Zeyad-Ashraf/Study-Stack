@@ -26,10 +26,10 @@ export class StudentInformation extends Model<
     type: DataType.INTEGER,
     allowNull: false,
   })
-  userId: number;
+  declare userId: number;
 
   @BelongsTo(() => User)
-  user: User;
+  declare user: User;
 
   @Column({
     type: DataType.ENUM,
@@ -39,5 +39,5 @@ export class StudentInformation extends Model<
       notEmpty: true,
     },
   })
-  student_level: EnumLevel;
+  declare student_level: EnumLevel;
 }

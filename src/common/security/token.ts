@@ -6,7 +6,7 @@ export class TokenService {
   constructor(private readonly jwtService: JwtService) {}
 
   async generateToken(
-    payload: Record<string, string>,
+    payload: Record<string, string | number>,
     options: JwtSignOptions,
   ): Promise<string> {
     return await this.jwtService.signAsync(payload, options);

@@ -1,7 +1,14 @@
 import { Module } from '@nestjs/common';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
-import { HashingServices, TokenService } from 'src/common';
+import {
+  AuthenticationGuard,
+  GenerateOtpObject,
+  HashingServices,
+  RolesGuard,
+  TokenDecodingClass,
+  TokenService,
+} from 'src/common';
 import {
   StudentInformation,
   StudentInformationRepo,
@@ -21,6 +28,10 @@ import { SequelizeModule } from '@nestjs/sequelize';
     UserRepoServices,
     StudentInformationRepo,
     JwtService,
+    GenerateOtpObject,
+    AuthenticationGuard,
+    RolesGuard,
+    TokenDecodingClass,
   ],
 })
 export class AuthModule {}

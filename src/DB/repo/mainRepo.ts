@@ -1,4 +1,4 @@
-import { UpdateOptions, WhereOptions } from 'sequelize';
+import { WhereOptions } from 'sequelize';
 import { Model, ModelStatic } from 'sequelize-typescript';
 
 export abstract class DbRepoServices<TDocument extends Model> {
@@ -22,7 +22,7 @@ export abstract class DbRepoServices<TDocument extends Model> {
 
   async findOneAndUpdate(
     id: number | string,
-    query: UpdateOptions<TDocument['_attributes']>,
+    query: Partial<TDocument['_attributes']>,
   ): Promise<TDocument | null> {
     const [affectedCount] = await this.model.update(query, {
       where: { id } as unknown as WhereOptions<TDocument['_attributes']>,
@@ -31,11 +31,25 @@ export abstract class DbRepoServices<TDocument extends Model> {
     if (affectedCount === 0) {
       return null;
     }
-    return await this.findById(id);
+    return await this.model.findByPk(id);
+  }
+
+  async findOneAndUpdateByEmail(
+    query: WhereOptions<TDocument['_attributes']>,
+    data: Partial<TDocument['_attributes']>,
+  ): Promise<TDocument | null> {
+    const [affectedCount] = await this.model.update(data, {
+      where: query,
+    });
+
+    if (affectedCount === 0) {
+      return null;
+    }
+    return await this.model.findOne({ where: query });
   }
 
   async findOneAndDelete(id: number | string): Promise<TDocument | null> {
-    const instance = await this.findById(id);
+    const instance = await this.model.findByPk(id);
     if (!instance) return null;
     await instance.destroy();
     return instance;
