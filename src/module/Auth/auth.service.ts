@@ -10,6 +10,7 @@ import {
   eventEmitter,
   GenerateOtpObject,
   HashingServices,
+  TokenDecodingClass,
   TokenService,
 } from 'src/common';
 
@@ -31,6 +32,7 @@ export class AuthService {
     private readonly userModel: UserRepoServices,
     private readonly infoModel: StudentInformationRepo,
     private readonly otpService: GenerateOtpObject,
+    private readonly tokenDecodedService: TokenDecodingClass,
   ) {}
 
   async signUp(data: UserDto): Promise<object> {
@@ -311,12 +313,33 @@ export class AuthService {
     return { message: 'success', access_token, refresh_token };
   }
 
-  // async resendOtp(data: ResendOTPDto): Promise<Object> {
-  //   const { token } = data;
-  //   if (!token) throw new BadRequestException('All Feilds Required');
-  //   return { message: 'success' };
-  // }
-  // async refreshToken(data: ResetPassDto): Promise<object> {
-  //   return { message: 'success', access_token };
-  // }
+  async refreshToken(req: Request): Promise<object> {
+    const authorization = req.headers['authorization'] as string;
+    const decoded = await this.tokenDecodedService.Decoding(
+      authorization,
+      'refreshToken',
+    );
+    const { id } = decoded;
+
+    const user = await this.userModel.findById(id);
+    if (!user) throw new NotFoundException('User not found');
+
+    const payload = {
+      id: user?.id as number,
+      email: user?.email,
+      role: user?.role,
+    };
+
+    const Access_SECRET_KEY =
+      user.role === EnumRole.admin
+        ? process.env.JWT_ACCESS_SECRET_ADMIN
+        : process.env.JWT_ACCESS_SECRET_USERS;
+
+    const access_token = await this.tokenService.generateToken(payload, {
+      secret: Access_SECRET_KEY,
+      expiresIn: process.env.JWT_ACCESS_EXPIRATION,
+    });
+
+    return { message: 'success', access_token };
+  }
 }

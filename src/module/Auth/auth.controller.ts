@@ -19,7 +19,6 @@ import {
   UserDto,
 } from './dto';
 
-import { EnumRole, Auth } from 'src/common';
 
 @Controller('auth')
 export class AuthController {
@@ -60,11 +59,9 @@ export class AuthController {
     return await this.authService.resetPass(data);
   }
 
-  @Get('test')
+  @Get('refreshToken')
   @HttpCode(200)
-  @Auth(EnumRole.admin, EnumRole.user)
-  test(@Req() req: Request): object {
-    if (!req['user']) return { message: 'not authorized' };
-    else return { message: 'done' };
+  async refreshToken(@Req() req: Request): Promise<object> {
+    return await this.authService.refreshToken(req);
   }
 }
