@@ -1,7 +1,6 @@
 import {
   Body,
   Controller,
-  Get,
   HttpCode,
   Post,
   Req,
@@ -59,7 +58,7 @@ export class AuthController {
     return await this.authService.resetPass(data);
   }
 
-  @Get('refreshToken')
+  @Post('refreshToken')
   @HttpCode(200)
   async refreshToken(@Req() req: Request): Promise<object> {
     return await this.authService.refreshToken(req);

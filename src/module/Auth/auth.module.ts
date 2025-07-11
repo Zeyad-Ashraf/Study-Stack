@@ -1,37 +1,14 @@
 import { Module } from '@nestjs/common';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
-import {
-  AuthenticationGuard,
-  GenerateOtpObject,
-  HashingServices,
-  RolesGuard,
-  TokenDecodingClass,
-  TokenService,
-} from 'src/common';
-import {
-  StudentInformation,
-  StudentInformationRepo,
-  User,
-  UserRepoServices,
-} from 'src/DB';
-import { JwtService } from '@nestjs/jwt';
+import { GenerateOtpObject } from 'src/common';
+import { StudentInformation, StudentInformationRepo } from 'src/DB';
 import { SequelizeModule } from '@nestjs/sequelize';
+import { SharedModule } from '../SharedModule/shared.module';
 
 @Module({
-  imports: [SequelizeModule.forFeature([User, StudentInformation])],
+  imports: [SequelizeModule.forFeature([StudentInformation]), SharedModule],
   controllers: [AuthController],
-  providers: [
-    AuthService,
-    HashingServices,
-    TokenService,
-    UserRepoServices,
-    StudentInformationRepo,
-    JwtService,
-    GenerateOtpObject,
-    AuthenticationGuard,
-    RolesGuard,
-    TokenDecodingClass,
-  ],
+  providers: [AuthService, StudentInformationRepo, GenerateOtpObject],
 })
 export class AuthModule {}
