@@ -5,6 +5,7 @@ import { SequelizeModule } from '@nestjs/sequelize';
 import { ConfigModule } from '@nestjs/config';
 import { AuthModule } from './module/Auth/auth.module';
 import { SharedModule } from './module/SharedModule/shared.module';
+import { AdminModule } from './module/Admin/admin.module';
 
 @Module({
   imports: [
@@ -22,8 +23,9 @@ import { SharedModule } from './module/SharedModule/shared.module';
       autoLoadModels: true,
       synchronize: true,
     }),
-    AuthModule,
     SharedModule,
+    AuthModule,
+    AdminModule,
   ],
   controllers: [AppController],
   providers: [AppService],
